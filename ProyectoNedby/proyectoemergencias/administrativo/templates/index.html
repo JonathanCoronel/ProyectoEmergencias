@@ -1,0 +1,39 @@
+{% extends "master.html" %}
+
+{% block title %}
+  Listado de Estudiantes
+{% endblock %}
+
+{% block content %}
+<section class="contenido">
+  <h2>Inicio</h2>
+<div class="botonAgregar">
+  <button>
+    <a href="{% url 'registro' %}">Registrar Nuevos Casos</a>
+  </button>
+</div>
+<h2>Nuevos Casos</h2>
+<div class="cuadroCasos">
+  <table>
+    <thead>
+      <tr>
+        <th>Numero ID</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+
+    {% for r in registros %}
+    <tr>
+      <td> {{r.id}} </td>
+      <td> {{r.fecha_hora|date:"d M Y"}} </td>
+      <td> {{r.fecha_hora|time:"H:i"}}</td>
+      <td> Registrado</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "master.html" %}
+
+{% block content %}
+<section class="contenido">
+    <h2>Nuevo Paciente</h3>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit">Guardar Paciente</button>
+        </form>
+
+</section>
+{% endblock %}

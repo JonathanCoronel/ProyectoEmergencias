@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+/* manejo de las características de la etiqueta body*/
+
+*{
+  margin: 0px;
+  font-family: 'Roboto';
+  font-style: normal;
+}
+body {
+  background: #FEFEFD;
+  padding: opx;
+}
+
+header {
+  color: #FFF;
+}
+header h1{
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  font-size: 60px;
+}
+
+.top_menu{
+  margin-top: 20px;
+}
+
+.top_menu ul{
+  display: flex;
+  font-size: 20px;
+  margin-left: 60px;
+  margin-bottom: 10px;
+}
+
+.top_menu ul li{
+  margin-right: 30px;
+}
+
+.top_menu ul li a{
+  text-decoration: none;
+  color: black;
+}
+
+
+header hr{
+  width: 90%;
+  margin: 0 auto;
+}
+
+.contenido{
+  width: 90%;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+.botonAgregar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.botonAgregar button{
+  background-color: red;
+  border-radius: 20px;
+  padding: 1em 1em;
+  border: none;  
+}
+
+.botonAgregar button a{
+  color: white;
+  font-size: 20px;
+  text-decoration: none;
+}
