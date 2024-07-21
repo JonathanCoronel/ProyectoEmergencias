@@ -24,7 +24,7 @@
       </tr>
     </thead>
 
-    {% for r in registros %}
+    {% for r in registros|slice:"0:3" %}
     <tr>
       <td> {{r.id}} </td>
       <td> {{r.fecha_hora|date:"d M Y"}} </td>

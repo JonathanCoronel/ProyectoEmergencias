@@ -18,6 +18,7 @@
       <th>Fecha de Nacimiento</th>
       <th>Genero</th>
       <th>Prioridad</th>
+      <th>Acciones</th>
     </tr>
   </thead>
 
@@ -29,6 +30,8 @@
     <td> {{p.fecha_nacimiento|date:"d M Y"}} </td>
     <td> {{p.genero}} </td>
     <td> Media </td>
+    <td> <a href="{% url 'registro' p.id %}">Registrar Signos Vitales</a>
+      <a href="{% url 'registros_paciente' p.id %}">Ver Registros</a></td>
   </tr>
   {% endfor %}
 </table>

@@ -54,3 +54,103 @@ def registro(request, pk=None):
         'formulario_paciente': formulario_paciente,
     }
     return render(request, 'crearRegistro.html', contexto)
+
+def registros_paciente(request, paciente_id):
+    paciente = get_object_or_404(Paciente, pk=paciente_id)
+    registros = Registro.objects.filter(paciente=paciente).order_by('-fecha_hora')
+
+    registros_con_alertas = []
+    previous = None
+
+    for registro in registros:
+        alertas = {}
+        if previous:
+            print("-------------------")
+            if registro.frecuencia_cardiaca < previous.frecuencia_cardiaca:
+                alertas['frecuencia_cardiaca'] = 'Frecuencia Cardiaca Aumentando'
+            elif registro.frecuencia_cardiaca > previous.frecuencia_cardiaca:
+                alertas['frecuencia_cardiaca'] = 'Frecuencia Cardiaca Disminuyendo'
+
+            if registro.frecuencia_respiratoria < previous.frecuencia_respiratoria:
+                alertas['frecuencia_respiratoria'] = 'Frecuencia Respiratoria Aumentando'
+            elif registro.frecuencia_respiratoria > previous.frecuencia_respiratoria:
+                alertas['frecuencia_respiratoria'] = 'Frecuencia Respiratoria Disminuyendo'
+
+            if registro.presion_arterial_sistolica < previous.presion_arterial_sistolica:
+                alertas['presion_arterial_sistolica'] = 'Presión Sistólica Aumentando'
+            elif registro.presion_arterial_sistolica > previous.presion_arterial_sistolica:
+                alertas['presion_arterial_sistolica'] = 'Presión Sistólica Disminuyendo'
+
+            if registro.presion_arterial_diastolica < previous.presion_arterial_diastolica:
+                alertas['presion_arterial_diastolica'] = 'Presión Diastólica Aumentando'
+            elif registro.presion_arterial_diastolica > previous.presion_arterial_diastolica:
+                alertas['presion_arterial_diastolica'] = 'Presión Diastólica Disminuyendo'
+
+            if registro.saturacion_oxigeno < previous.saturacion_oxigeno:
+                alertas['saturacion_oxigeno'] = 'Saturación de Oxígeno Aumentando'
+            elif registro.saturacion_oxigeno > previous.saturacion_oxigeno:
+                alertas['saturacion_oxigeno'] = 'Saturación de Oxígeno Disminuyendo'
+
+            if registro.temperatura < previous.temperatura:
+                alertas['temperatura'] = 'Temperatura Aumentando'
+            elif registro.temperatura > previous.temperatura:
+                alertas['temperatura'] = 'Temperatura Disminuyendo'
+
+        registros_con_alertas.append((registro, alertas))
+        previous = registro
+
+    if request.method == 'POST':
+        formulario_registro = RegistroForm(request.POST)
+        if formulario_registro.is_valid():
+            nuevo_registro = formulario_registro.save(commit=False)
+            nuevo_registro.paciente = paciente
+            nuevo_registro.save()
+
+            # Limpiar alertas anteriores
+            registros_con_alertas.clear()
+
+            # Reconstruir alertas con el nuevo registro
+            registros = Registro.objects.filter(paciente=paciente).order_by('-fecha_hora')
+            previous = None
+
+            for registro in registros:
+                alertas = {}
+                if previous:
+                    if registro.frecuencia_cardiaca < previous.frecuencia_cardiaca:
+                        alertas['frecuencia_cardiaca'] = 'Frecuencia Cardiaca Aumentando'
+                    elif registro.frecuencia_cardiaca > previous.frecuencia_cardiaca:
+                        alertas['frecuencia_cardiaca'] = 'Frecuencia Cardiaca Disminuyendo'
+
+                    if registro.frecuencia_respiratoria < previous.frecuencia_respiratoria:
+                        alertas['frecuencia_respiratoria'] = 'Frecuencia Respiratoria Aumentando'
+                    elif registro.frecuencia_respiratoria > previous.frecuencia_respiratoria:
+                        alertas['frecuencia_respiratoria'] = 'Frecuencia Respiratoria Disminuyendo'
+
+                    if registro.presion_arterial_sistolica < previous.presion_arterial_sistolica:
+                        alertas['presion_arterial_sistolica'] = 'Presión Sistólica Aumentando'
+                    elif registro.presion_arterial_sistolica > previous.presion_arterial_sistolica:
+                        alertas['presion_arterial_sistolica'] = 'Presión Sistólica Disminuyendo'
+
+                    if registro.presion_arterial_diastolica < previous.presion_arterial_diastolica:
+                        alertas['presion_arterial_diastolica'] = 'Presión Diastólica Aumentando'
+                    elif registro.presion_arterial_diastolica > previous.presion_arterial_diastolica:
+                        alertas['presion_arterial_diastolica'] = 'Presión Diastólica Disminuyendo'
+
+                    if registro.saturacion_oxigeno < previous.saturacion_oxigeno:
+                        alertas['saturacion_oxigeno'] = 'Saturación de Oxígeno Aumentando'
+                    elif registro.saturacion_oxigeno > previous.saturacion_oxigeno:
+                        alertas['saturacion_oxigeno'] = 'Saturación de Oxígeno Disminuyendo'
+
+                    if registro.temperatura < previous.temperatura:
+                        alertas['temperatura'] = 'Temperatura Aumentando'
+                    elif registro.temperatura > previous.temperatura:
+                        alertas['temperatura'] = 'Temperatura Disminuyendo'
+
+                registros_con_alertas.append((registro, alertas))
+                previous = registro
+
+    contexto = {
+        'paciente': paciente,
+        'registros_con_alertas': registros_con_alertas,
+    }
+    return render(request, 'registrosPaciente.html', contexto)

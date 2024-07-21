@@ -1,0 +1,50 @@
+{% extends "master.html" %}
+
+{% block content %}
+<section class="contenido">
+    <h2>Registros de Signos Vitales para {{ paciente.nombre }} {{ paciente.apellido }}</h2>
+
+    <table>
+        <tr>
+            <th>Fecha y Hora</th>
+            <th>Frecuencia Cardiaca</th>
+            <th>Frecuencia Respiratoria</th>
+            <th>Presión Sistólica</th>
+            <th>Presión Diastólica</th>
+            <th>Saturación de Oxígeno</th>
+            <th>Temperatura</th>
+        </tr>
+        {% for registro, alertas in registros_con_alertas %}
+        <tr>
+            <td>{{ registro.fecha_hora }}</td>
+            <td>{{ registro.frecuencia_cardiaca }}</td>
+            <td>{{ registro.frecuencia_respiratoria }}</td>
+            <td>{{ registro.presion_arterial_sistolica }}</td>
+            <td>{{ registro.presion_arterial_diastolica }}</td>
+            <td>{{ registro.saturacion_oxigeno }}</td>
+            <td>{{ registro.temperatura }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    {% if registros_con_alertas %}
+    <div>
+        <h2>Alertas</h2>
+        <ul>
+            {% for registro, alertas in registros_con_alertas %}
+                {% for key, value in alertas.items %}
+                    <li>{{ registro.fecha_hora }} - {{ value }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div>
+        <p>No se encontraron alertas.</p>
+    </div>
+    {% endif %}
+    
+    
+
+</section>
+{% endblock %}
