@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Dolor</title>
+    <style>
+        .body-map-container {
+            position: relative;
+            width: 500px; /* Ajusta el ancho según tu necesidad */
+            margin: 0 auto;
+        }
+        .body-map {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .pain-area {
+            position: absolute;
+            background-color: rgba(255, 0, 0, 0.3); /* Fondo rojo semitransparente */
+        }
+        .pain-area.head {
+            top: 10px; /* Ajusta según tu imagen */
+            left: 200px; /* Ajusta según tu imagen */
+            width: 100px; /* Ajusta según tu imagen */
+            height: 100px; /* Ajusta según tu imagen */
+        }
+        .pain-area.torso {
+            top: 110px; /* Ajusta según tu imagen */
+            left: 180px; /* Ajusta según tu imagen */
+            width: 140px; /* Ajusta según tu imagen */
+            height: 150px; /* Ajusta según tu imagen */
+        }
+        .pain-area.hip {
+            top: 260px; /* Ajusta según tu imagen */
+            left: 180px; /* Ajusta según tu imagen */
+            width: 140px; /* Ajusta según tu imagen */
+            height: 100px; /* Ajusta según tu imagen */
+        }
+        .pain-area.legs {
+            top: 360px; /* Ajusta según tu imagen */
+            left: 190px; /* Ajusta según tu imagen */
+            width: 120px; /* Ajusta según tu imagen */
+            height: 200px; /* Ajusta según tu imagen */
+        }
+        .pain-point {
+            position: absolute;
+            background-color: red;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: none;
+        }
+        .pain-info {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registro de Dolor</h1>
+    <form id="pain-form" method="post">
+        {% csrf_token %}
+        <div class="body-map-container">
+            <img src="/static/images/body-chart.jpeg" alt="Body Map" class="body-map" style="height: 600px;">
+            <div class="pain-area head"></div>
+            <div class="pain-area torso"></div>
+            <div class="pain-area hip"></div>
+            <div class="pain-area legs"></div>
+            <div class="pain-point" id="pain-point"></div>
+        </div>
+        <div class="pain-info">
+            <label for="pain-type">Tipo de Dolor:</label><br>
+            <input type="radio" name="pain_type" value="Pulsante"> Pulsante<br>
+            <input type="radio" name="pain_type" value="Quemazón"> Quemazón<br>
+            <input type="radio" name="pain_type" value="Eléctrico"> Eléctrico<br>
+        </div>
+        <input type="hidden" name="location_x" id="location-x">
+        <input type="hidden" name="location_y" id="location-y">
+        <button type="submit">Registrar</button>
+    </form>
+    <div id="selected-pain" style="margin-top: 20px;"></div>
+
+    <script>
+        const bodyMapContainer = document.querySelector('.body-map-container');
+        const painPoint = document.getElementById('pain-point');
+        const selectedPainDiv = document.getElementById('selected-pain');
+        const locationXInput = document.getElementById('location-x');
+        const locationYInput = document.getElementById('location-y');
+        let selectedPainType = '';
+
+        document.querySelectorAll('input[name="pain_type"]').forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                selectedPainType = event.target.value;
+            });
+        });
+
+        bodyMapContainer.addEventListener('click', (event) => {
+            const rect = bodyMapContainer.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            locationXInput.value = x;
+            locationYInput.value = y;
+
+            let area = '';
+            if (y >= 10 && y <= 110 && x >= 200 && x <= 300) {
+                area = 'Cabeza';
+            } else if (y > 110 && y <= 260 && x >= 180 && x <= 320) {
+                area = 'Torso';
+            } else if (y > 260 && y <= 360 && x >= 180 && x <= 320) {
+                area = 'Cadera';
+            } else if (y > 360 && y <= 560 && x >= 190 && x <= 310) {
+                area = 'Piernas';
+            } else {
+                area = 'Fuera del cuerpo';
+            }
+
+            setPainPoint(painPoint, x, y);
+            selectedPainDiv.innerHTML = `${area}: ${selectedPainType}`;
+        });
+
+        function setPainPoint(element, x, y) {
+            element.style.left = `${x - 10}px`;
+            element.style.top = `${y - 10}px`;
+            element.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

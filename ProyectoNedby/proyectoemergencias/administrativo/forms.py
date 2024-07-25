@@ -1,8 +1,9 @@
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
+from django.forms import formset_factory
 from django import forms
 
-from administrativo.models import Paciente, Registro
+from administrativo.models import Paciente, Registro, UbicacionDolor
 class PacienteForm(forms.ModelForm):
     class Meta:
         model = Paciente
@@ -25,3 +26,8 @@ class RegistroForm(forms.ModelForm):
             'fecha_hora': forms.HiddenInput(),  # Ocultar el campo de fecha y hora (generado automáticamente)
             'paciente': forms.Select(),  # Usar un widget Select para el campo paciente (menú desplegable)
         }
+
+class UbicacionDolorForm(forms.ModelForm):
+    class Meta:
+        model = UbicacionDolor
+        fields = ['ubicacion', 'tipo_dolor']

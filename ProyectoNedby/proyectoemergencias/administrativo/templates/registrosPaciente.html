@@ -44,7 +44,25 @@
     </div>
     {% endif %}
     
+    <h2>Registros de Dolor</h2>
+    <table>
+        <tr>
+            <th>Fecha y Hora</th>
+            <th>Ubicación</th>
+            <th>Tipo de Dolor</th>
+        </tr>
+        {% for ubicacion in ubicaciones_dolor %}
+        <tr>
+            <td>{{ ubicacion.registro.fecha_hora }}</td>
+            <td>{{ ubicacion.ubicacion }}</td>
+            <td>{{ ubicacion.tipo_dolor }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No hay registros de dolor.</td>
+        </tr>
+        {% endfor %}
+    </table>
     
-
 </section>
 {% endblock %}
