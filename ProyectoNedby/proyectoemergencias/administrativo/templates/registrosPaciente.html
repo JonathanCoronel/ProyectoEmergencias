@@ -4,7 +4,7 @@
 <section class="contenido">
     <h2>Registros de Signos Vitales para {{ paciente.nombre }} {{ paciente.apellido }}</h2>
 
-    <table>
+    <table id="tabla-registros">
         <tr>
             <th>Fecha y Hora</th>
             <th>Frecuencia Cardiaca</th>
@@ -27,23 +27,14 @@
         {% endfor %}
     </table>
     
-    {% if registros_con_alertas %}
-    <div>
+    
+    <div id="alertas">
         <h2>Alertas</h2>
-        <ul>
-            {% for registro, alertas in registros_con_alertas %}
-                {% for key, value in alertas.items %}
-                    <li>{{ registro.fecha_hora }} - {{ value }}</li>
-                {% endfor %}
-            {% endfor %}
+        <ul id="lista-alertas">
+            <!-- Las alertas se agregarán aquí dinámicamente con JavaScript -->
         </ul>
     </div>
-    {% else %}
-    <div>
-        <p>No se encontraron alertas.</p>
-    </div>
-    {% endif %}
-    
+
     <h2>Registros de Dolor</h2>
     <table>
         <tr>
@@ -63,6 +54,74 @@
         </tr>
         {% endfor %}
     </table>
+
+    <!-- Agregar script JavaScript al final del archivo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener todas las filas de la tabla, excepto la de encabezado
+            const registros = Array.from(document.querySelectorAll('#tabla-registros tr')).slice(1);
+            const alertasLista = document.getElementById('lista-alertas');
+    
+            // Asegúrate de que hay al menos dos registros para comparar
+            if (registros.length >= 2) {
+                // Primer y segundo registros
+                const primerRegistro = registros[0];
+                const segundoRegistro = registros[1];
+                
+                // Función para obtener valores numéricos de una celda
+                const getValor = (fila, indice) => parseFloat(fila.cells[indice].textContent.trim());
+                
+                // Verificar si se obtienen valores numéricos válidos
+                console.log('Primer Registro:', Array.from(primerRegistro.cells).map(cell => cell.textContent.trim()));
+                console.log('Segundo Registro:', Array.from(segundoRegistro.cells).map(cell => cell.textContent.trim()));
+    
+                const alertas = [];
+    
+                // Función para comparar valores y generar alertas
+                const compararValores = (primero, segundo, indice, nombre) => {
+                    const primerValor = getValor(primero, indice);
+                    const segundoValor = getValor(segundo, indice);
+                    
+                    console.log(`Comparando ${nombre}: Primer = ${primerValor}, Segundo = ${segundoValor}`); // Depuración
+                    
+                    let alerta = '';
+                    if (segundoValor < primerValor) {
+                        alerta = `${nombre} Aumentando`;
+                    } else if (segundoValor > primerValor) {
+                        alerta = `${nombre} Disminuyendo`;
+                    }
+    
+                    if (alerta) {
+                        alertas.push(`${segundoRegistro.cells[0].textContent} - ${alerta}`);
+                    }
+                };
+    
+                // Comparar cada signo vital
+                compararValores(primerRegistro, segundoRegistro, 1, 'Frecuencia Cardiaca');
+                compararValores(primerRegistro, segundoRegistro, 2, 'Frecuencia Respiratoria');
+                compararValores(primerRegistro, segundoRegistro, 3, 'Presión Sistólica');
+                compararValores(primerRegistro, segundoRegistro, 4, 'Presión Diastólica');
+                compararValores(primerRegistro, segundoRegistro, 5, 'Saturación de Oxígeno');
+                compararValores(primerRegistro, segundoRegistro, 6, 'Temperatura');
+    
+                // Agregar alertas a la lista
+                alertas.forEach(alerta => {
+                    alertasLista.innerHTML += `<li>${alerta}</li>`;
+                });
+    
+                // Mensaje de depuración si no hay alertas
+                if (alertas.length === 0) {
+                    alertasLista.innerHTML = '<li>No se detectaron cambios significativos.</li>';
+                }
+            } else {
+                // Mensaje si no hay suficientes registros
+                alertasLista.innerHTML = '<li>No hay suficientes registros para comparar.</li>';
+            }
+        });
+    </script>
+    
+    
+    
     
 </section>
 {% endblock %}

@@ -35,5 +35,28 @@
   </table>
 </div>
 
+<h2>Personal Medico</h2>
+<div class="cuadroCasos">
+  <table>
+    <thead>
+      <tr>
+        <th>Numero ID</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+
+    {% for r in registros|slice:"0:3" %}
+    <tr>
+      <td> {{r.id}} </td>
+      <td> {{r.fecha_hora|date:"d M Y"}} </td>
+      <td> {{r.fecha_hora|time:"H:i"}}</td>
+      <td> Registrado</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
 </section>
 {% endblock %}

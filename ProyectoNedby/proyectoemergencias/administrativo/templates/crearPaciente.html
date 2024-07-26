@@ -1,13 +1,13 @@
 {% extends "master.html" %}
 
 {% block content %}
-<section class="contenido">
+<section class="contenidoPaciente">
     <h2>Nuevo Paciente</h3>
 
-        <form method="post">
+        <form class="my-form" method="post">
             {% csrf_token %}
             {{ formulario.as_p }}
-            <button type="submit">Guardar Paciente</button>
+            <button  class="submit-btn" type="submit">Guardar Paciente</button>
         </form>
 
 </section>

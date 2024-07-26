@@ -1,62 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Registro de Dolor</title>
-    <style>
-        .body-map-container {
-            position: relative;
-            width: 500px; /* Ajusta el ancho según tu necesidad */
-            margin: 0 auto;
-        }
-        .body-map {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-        .pain-area {
-            position: absolute;
-            background-color: rgba(255, 0, 0, 0.3); /* Fondo rojo semitransparente */
-        }
-        .pain-area.head {
-            top: 10px; /* Ajusta según tu imagen */
-            left: 200px; /* Ajusta según tu imagen */
-            width: 100px; /* Ajusta según tu imagen */
-            height: 100px; /* Ajusta según tu imagen */
-        }
-        .pain-area.torso {
-            top: 110px; /* Ajusta según tu imagen */
-            left: 180px; /* Ajusta según tu imagen */
-            width: 140px; /* Ajusta según tu imagen */
-            height: 150px; /* Ajusta según tu imagen */
-        }
-        .pain-area.hip {
-            top: 260px; /* Ajusta según tu imagen */
-            left: 180px; /* Ajusta según tu imagen */
-            width: 140px; /* Ajusta según tu imagen */
-            height: 100px; /* Ajusta según tu imagen */
-        }
-        .pain-area.legs {
-            top: 360px; /* Ajusta según tu imagen */
-            left: 190px; /* Ajusta según tu imagen */
-            width: 120px; /* Ajusta según tu imagen */
-            height: 200px; /* Ajusta según tu imagen */
-        }
-        .pain-point {
-            position: absolute;
-            background-color: red;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: none;
-        }
-        .pain-info {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Registro de Dolor</h1>
+{% extends "master.html" %}
+
+{% block title %}
+  Registro Fisico
+{% endblock %}
+
+{% block content %}
+<section class="conte_fisico">
+
+    <h2 class="titulo_RegistroFisico">Registro de Dolor</h2>
     <form id="pain-form" method="post">
         {% csrf_token %}
         <div class="body-map-container">
@@ -73,11 +24,11 @@
             <input type="radio" name="pain_type" value="Quemazón"> Quemazón<br>
             <input type="radio" name="pain_type" value="Eléctrico"> Eléctrico<br>
         </div>
-        <input type="hidden" name="location_x" id="location-x">
-        <input type="hidden" name="location_y" id="location-y">
-        <button type="submit">Registrar</button>
+            <input type="hidden" name="location_x" id="location-x">
+            <input  type="hidden" name="location_y" id="location-y">
+        <button class="btonfisico" type="submit">Registrar</button>
     </form>
-    <div id="selected-pain" style="margin-top: 20px;"></div>
+    <div id="selected-pain" class="contenidoSeleccionado"></div>
 
     <script>
         const bodyMapContainer = document.querySelector('.body-map-container');
@@ -124,5 +75,6 @@
             element.style.display = 'block';
         }
     </script>
-</body>
-</html>
+
+</section>
+{% endblock %}

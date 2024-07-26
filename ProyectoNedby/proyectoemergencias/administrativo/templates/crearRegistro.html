@@ -1,17 +1,131 @@
 {% extends "master.html" %}
 
 {% block content %}
-<section class="contenido">
+<section class="contenidoRegis">
   <h2>Registro</h2>
 
-<form method="post">
-  {% csrf_token %}
-  {{ formulario_registro.as_p }}
-  <button type="submit">Continuar</button>
-</form>
+  <form class="my-form" method="post">
+    {% csrf_token %}
+    <div class="paciente">
+      <label class="label-paciente" for="{{ formulario_registro.paciente.id_for_label }}">{{ formulario_registro.paciente.label }}</label>
+      {{ formulario_registro.paciente }}
+      
+      <a href="{% url 'crear_paciente' %}?next={% url 'registro' %}" class="add-paciente-btn"><i class="fa-solid fa-plus"></i></a>
+    </div>
 
-<h2>Agregar Nuevo Paciente</h2>
-<a href="{% url 'crear_paciente' %}?next={% url 'registro' %}">Agregar Paciente</a>
+    <div class="form-group2">
+      <label for="{{ formulario_registro.frecuencia_cardiaca.id_for_label }}">{{ formulario_registro.frecuencia_cardiaca.label }}</label>
+      <div class="input-group">
+        {{ formulario_registro.frecuencia_cardiaca }}
+        <span class="unit">lpm</span>
+        <div id="frecuencia-cardiaca-status" class="status-indicator green"></div>
+      </div>
+    </div>
+
+    <div class="form-group2">
+      <label for="{{ formulario_registro.frecuencia_respiratoria.id_for_label }}">{{ formulario_registro.frecuencia_respiratoria.label }}</label>
+      <div class="input-group">
+        {{ formulario_registro.frecuencia_respiratoria }}
+        <span class="unit">rpm</span>
+        <div id="frecuencia-respiratoria-status" class="status-indicator green"></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ formulario_registro.presion_arterial_sistolica.id_for_label }}">Tensión arterial</label>
+      <div class="input-group">
+        {{ formulario_registro.presion_arterial_sistolica }}
+        <span class="unit">Sistólica</span>
+        {{ formulario_registro.presion_arterial_diastolica }}
+        <span class="unit">Diastólica</span>
+        <div id="presion-arterial-status" class="status-indicator yellow"></div>
+      </div>
+    </div>
+
+    <div class="form-group2">
+      <label for="{{ formulario_registro.saturacion_oxigeno.id_for_label }}">{{ formulario_registro.saturacion_oxigeno.label }}</label>
+      <div class="input-group">
+        {{ formulario_registro.saturacion_oxigeno }}
+        <span class="unit">%</span>
+        <div id="saturacion-oxigeno-status" class="status-indicator red"></div>
+      </div>
+    </div>
+
+    <div class="form-group2">
+      <label for="{{ formulario_registro.temperatura.id_for_label }}">{{ formulario_registro.temperatura.label }}</label>
+      <div class="input-group">
+        {{ formulario_registro.temperatura }}
+        <span class="unit">°C</span>
+        <div id="temperatura-status" class="status-indicator green"></div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Continuar</button>
+  </form>
   
+  <div class="warnings">
+    <!-- Aquí se mostrará el nivel de prioridad -->
+  </div>
+  <br>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const frecuenciaCardiacaInput = document.getElementById("id_frecuencia_cardiaca");
+  const frecuenciaRespiratoriaInput = document.getElementById("id_frecuencia_respiratoria");
+  const presionArterialSistolicaInput = document.getElementById("id_presion_arterial_sistolica");
+  const presionArterialDiastolicaInput = document.getElementById("id_presion_arterial_diastolica");
+  const saturacionOxigenoInput = document.getElementById("id_saturacion_oxigeno");
+  const temperaturaInput = document.getElementById("id_temperatura");
+
+  function updateIndicator(value, greenRange, yellowRange, indicatorId) {
+    const indicator = document.getElementById(indicatorId);
+    indicator.classList.remove("green", "yellow", "red");
+    
+    if (value >= greenRange[0] && value <= greenRange[1]) {
+      indicator.classList.add("green");
+      return "green";
+    } else if (value >= yellowRange[0] && value <= yellowRange[1]) {
+      indicator.classList.add("yellow");
+      return "yellow";
+    } else {
+      indicator.classList.add("red");
+      return "red";
+    }
+  }
+
+  function calculatePriority() {
+    const frecuenciaCardiacaStatus = updateIndicator(frecuenciaCardiacaInput.value, [60, 100], [40, 59, 101, 120], "frecuencia-cardiaca-status");
+    const frecuenciaRespiratoriaStatus = updateIndicator(frecuenciaRespiratoriaInput.value, [12, 20], [9, 11, 21, 24], "frecuencia-respiratoria-status");
+    const presionArterialSistolicaStatus = updateIndicator(presionArterialSistolicaInput.value, [90, 120], [80, 89, 121, 140], "presion-arterial-status");
+    const presionArterialDiastolicaStatus = updateIndicator(presionArterialDiastolicaInput.value, [60, 80], [50, 59, 81, 90], "presion-arterial-status");
+    const saturacionOxigenoStatus = updateIndicator(saturacionOxigenoInput.value, [95, 100], [90, 94], "saturacion-oxigeno-status");
+    const temperaturaStatus = updateIndicator(temperaturaInput.value, [36.5, 37.5], [35.5, 36.4, 37.6, 38.5], "temperatura-status");
+
+    let priorityLevel = "No urgente";
+    let priorityIcon = "fa-solid fa-truck-medical"; // Default icon
+    let colorIcon = "63E6BE"; // Default color
+    
+    if (frecuenciaCardiacaStatus === "red" || frecuenciaRespiratoriaStatus === "red" || presionArterialSistolicaStatus === "red" || presionArterialDiastolicaStatus === "red" || saturacionOxigenoStatus === "red" || temperaturaStatus === "red") {
+      priorityLevel = "Emergencia Inmediata";
+      priorityIcon = "fa-solid fa-truck-medical";
+      colorIcon = "e01b24"; // Rojo
+    } else if (frecuenciaCardiacaStatus === "yellow" || frecuenciaRespiratoriaStatus === "yellow" || presionArterialSistolicaStatus === "yellow" || presionArterialDiastolicaStatus === "yellow" || saturacionOxigenoStatus === "yellow" || temperaturaStatus === "yellow") {
+      priorityLevel = "Urgente";
+      priorityIcon = "fa-solid fa-truck-medical";
+      colorIcon = "FFD43B"; // Amarillo
+    }
+    
+    document.querySelector(".warnings").innerHTML = `<p><i class="${priorityIcon}" style="color: #${colorIcon}; font-size: 80px;"></i> ${priorityLevel}</p>`;
+  }
+
+  frecuenciaCardiacaInput.addEventListener("input", calculatePriority);
+  frecuenciaRespiratoriaInput.addEventListener("input", calculatePriority);
+  presionArterialSistolicaInput.addEventListener("input", calculatePriority);
+  presionArterialDiastolicaInput.addEventListener("input", calculatePriority);
+  saturacionOxigenoInput.addEventListener("input", calculatePriority);
+  temperaturaInput.addEventListener("input", calculatePriority);
+});
+</script>
+
 {% endblock %}
