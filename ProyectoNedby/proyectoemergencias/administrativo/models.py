@@ -21,9 +21,11 @@ class Registro(models.Model):
     presion_arterial_diastolica = models.IntegerField()
     saturacion_oxigeno = models.IntegerField()
     temperatura = models.DecimalField(max_digits=5, decimal_places=2)
+    nivel_gravedad = models.CharField(max_length=50, blank=True)  # Nuevo campo
 
     def __str__(self):
-        return f"{self.paciente.nombre} {self.fecha_hora} {self.frecuencia_cardiaca} {self.frecuencia_respiratoria} {self.presion_arterial_sistolica} {self.presion_arterial_diastolica} {self.saturacion_oxigeno} {self.temperatura}"
+        return f"{self.paciente.nombre} {self.fecha_hora} {self.frecuencia_cardiaca} {self.frecuencia_respiratoria} {self.presion_arterial_sistolica} {self.presion_arterial_diastolica} {self.saturacion_oxigeno} {self.temperatura} {self.nivel_gravedad}"
+
     
 class UbicacionDolor(models.Model):
     registro = models.ForeignKey(Registro, on_delete=models.CASCADE, related_name='ubicaciones_dolor')

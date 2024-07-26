@@ -325,3 +325,36 @@ hola{
   top: 50%;
 }
 
+
+/*Listado de Pacientes*/
+
+/* styles.css */
+
+/* Efecto de brillo */
+.icono-brillante {
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6), 0 0 15px rgba(255, 255, 255, 0.4);
+  transition: text-shadow 0.3s ease-in-out;
+}
+
+.icono-brillante.green {
+  color: #63E6BE;
+}
+
+.icono-brillante.yellow {
+  color: #FFD43B;
+}
+
+.icono-brillante.red {
+  color: #e01b24;
+}
+
+.icono-brillante:hover {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 15px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.contenido h2{
+  margin: 1em 0;
+  text-align: center;
+}
+
+

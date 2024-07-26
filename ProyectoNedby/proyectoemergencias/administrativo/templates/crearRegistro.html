@@ -60,6 +60,7 @@
       </div>
     </div>
 
+    <input type="hidden" id="id_nivel_gravedad" name="nivel_gravedad" value="">
     <button type="submit" class="submit-btn">Continuar</button>
   </form>
   
@@ -77,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const presionArterialDiastolicaInput = document.getElementById("id_presion_arterial_diastolica");
   const saturacionOxigenoInput = document.getElementById("id_saturacion_oxigeno");
   const temperaturaInput = document.getElementById("id_temperatura");
+  const nivelGravedadInput = document.getElementById("id_nivel_gravedad");
 
   function updateIndicator(value, greenRange, yellowRange, indicatorId) {
     const indicator = document.getElementById(indicatorId);
@@ -102,29 +104,31 @@ document.addEventListener("DOMContentLoaded", function() {
     const saturacionOxigenoStatus = updateIndicator(saturacionOxigenoInput.value, [95, 100], [90, 94], "saturacion-oxigeno-status");
     const temperaturaStatus = updateIndicator(temperaturaInput.value, [36.5, 37.5], [35.5, 36.4, 37.6, 38.5], "temperatura-status");
 
-    let priorityLevel = "No urgente";
-    let priorityIcon = "fa-solid fa-truck-medical"; // Default icon
-    let colorIcon = "63E6BE"; // Default color
-    
-    if (frecuenciaCardiacaStatus === "red" || frecuenciaRespiratoriaStatus === "red" || presionArterialSistolicaStatus === "red" || presionArterialDiastolicaStatus === "red" || saturacionOxigenoStatus === "red" || temperaturaStatus === "red") {
-      priorityLevel = "Emergencia Inmediata";
-      priorityIcon = "fa-solid fa-truck-medical";
-      colorIcon = "e01b24"; // Rojo
-    } else if (frecuenciaCardiacaStatus === "yellow" || frecuenciaRespiratoriaStatus === "yellow" || presionArterialSistolicaStatus === "yellow" || presionArterialDiastolicaStatus === "yellow" || saturacionOxigenoStatus === "yellow" || temperaturaStatus === "yellow") {
-      priorityLevel = "Urgente";
-      priorityIcon = "fa-solid fa-truck-medical";
-      colorIcon = "FFD43B"; // Amarillo
+    const statuses = [frecuenciaCardiacaStatus, frecuenciaRespiratoriaStatus, presionArterialSistolicaStatus, presionArterialDiastolicaStatus, saturacionOxigenoStatus, temperaturaStatus];
+
+    if (statuses.includes("red")) {
+      return { level: "Emergencia Inmediata", icon: "fa-solid fa-truck-medical", color: "e01b24" };
+    } else if (statuses.includes("yellow")) {
+      return { level: "Urgente", icon: "fa-solid fa-truck-medical", color: "FFD43B" };
+    } else {
+      return { level: "No urgente", icon: "fa-solid fa-truck-medical", color: "63E6BE" };
     }
-    
-    document.querySelector(".warnings").innerHTML = `<p><i class="${priorityIcon}" style="color: #${colorIcon}; font-size: 80px;"></i> ${priorityLevel}</p>`;
   }
 
-  frecuenciaCardiacaInput.addEventListener("input", calculatePriority);
-  frecuenciaRespiratoriaInput.addEventListener("input", calculatePriority);
-  presionArterialSistolicaInput.addEventListener("input", calculatePriority);
-  presionArterialDiastolicaInput.addEventListener("input", calculatePriority);
-  saturacionOxigenoInput.addEventListener("input", calculatePriority);
-  temperaturaInput.addEventListener("input", calculatePriority);
+  function updatePriority() {
+    const priority = calculatePriority();
+    nivelGravedadInput.value = priority.level;
+
+    const warningsDiv = document.querySelector(".warnings");
+    warningsDiv.innerHTML = `<p><i class="${priority.icon}" style="color: #${priority.color}; font-size: 80px;"></i> ${priority.level}</p>`;
+  }
+
+  frecuenciaCardiacaInput.addEventListener("input", updatePriority);
+  frecuenciaRespiratoriaInput.addEventListener("input", updatePriority);
+  presionArterialSistolicaInput.addEventListener("input", updatePriority);
+  presionArterialDiastolicaInput.addEventListener("input", updatePriority);
+  saturacionOxigenoInput.addEventListener("input", updatePriority);
+  temperaturaInput.addEventListener("input", updatePriority);
 });
 </script>
 

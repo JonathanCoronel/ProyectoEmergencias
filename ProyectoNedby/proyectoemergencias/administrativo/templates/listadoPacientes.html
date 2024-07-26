@@ -22,22 +22,37 @@
     </tr>
   </thead>
 
-  {% for p in pacientes %}
+  <tbody>
+  {% for paciente, prioridad in pacientes_con_prioridad %}
   <tr>
-    <td> {{p.nombre}} </td>
-    <td> {{p.apellido}} </td>
-    <td> {{p.cedula}} </td>
-    <td> {{p.fecha_nacimiento|date:"d M Y"}} </td>
-    <td> {{p.genero}} </td>
-    <td> Media </td>
-    <td> <a href="{% url 'registro' p.id %}">Registrar Signos Vitales</a>
-      <a href="{% url 'registros_paciente' p.id %}">Ver Registros</a></td>
+    <td>{{ paciente.nombre }}</td>
+    <td>{{ paciente.apellido }}</td>
+    <td>{{ paciente.cedula }}</td>
+    <td>{{ paciente.fecha_nacimiento|date:"d M Y" }}</td>
+    <td>{{ paciente.genero }}</td>
+    <td>
+      {% if prioridad == "Emergencia Inmediata" %}
+        <i class="fa-solid fa-truck-medical" style="color: #e01b24; font-size: 24px;"></i>
+      {% elif prioridad == "Urgente" %}
+        <i class="fa-solid fa-truck-medical" style="color: #FFD43B; font-size: 24px;"></i>
+      {% elif prioridad == "No Urgente" %}
+        <i class="fa-solid fa-truck-medical" style="color: #63E6BE; font-size: 24px;"></i>
+      {% else %}
+        <i class="fa-solid fa-truck-medical" style="color: #C0C0C0; font-size: 24px;"></i> <!-- Color gris si no hay prioridad -->
+      {% endif %}
+    </td>
+    <td>
+      <a href="{% url 'registro' paciente.id %}">Registrar Signos Vitales</a>
+      <a href="{% url 'registros_paciente' paciente.id %}">Ver Registros</a>
+    </td>
   </tr>
   {% endfor %}
+  </tbody>
+
 </table>
 
 <script type="text/javascript">
-  $(document).ready( function () {
+  $(document).ready(function () {
     $('#tabla_datos').DataTable();
   });
 </script>

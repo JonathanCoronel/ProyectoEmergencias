@@ -22,11 +22,29 @@ def crear_paciente(request):
     contexto = {'formulario': formulario}
     return render(request, 'crearPaciente.html', contexto)
 
+# views.py
+
+from django.shortcuts import render
+from .models import Paciente, Registro
+
 def listar_pacientes(request):
     pacientes = Paciente.objects.all()
+    pacientes_con_prioridad = []
 
-    informacion_template = {'pacientes': pacientes, 'numero_pacientes': len(pacientes)}
+    for paciente in pacientes:
+        ultimo_registro = Registro.objects.filter(paciente=paciente).order_by('-fecha_hora').first()
+        if ultimo_registro:
+            pacientes_con_prioridad.append((paciente, ultimo_registro.nivel_gravedad))
+        else:
+            pacientes_con_prioridad.append((paciente, None))
+
+    informacion_template = {
+        'pacientes_con_prioridad': pacientes_con_prioridad,
+        'numero_pacientes': len(pacientes),
+    }
+
     return render(request, 'listadoPacientes.html', informacion_template)
+
 
 def registro(request, pk=None):
     formulario_registro = RegistroForm(request.POST or None)

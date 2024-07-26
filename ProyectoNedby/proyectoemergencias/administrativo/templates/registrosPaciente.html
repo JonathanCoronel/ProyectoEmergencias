@@ -2,9 +2,10 @@
 
 {% block content %}
 <section class="contenido">
-    <h2>Registros de Signos Vitales para {{ paciente.nombre }} {{ paciente.apellido }}</h2>
+    <h2>Registros de Signos Vitales {{ paciente.nombre }} {{ paciente.apellido }}</h2>
 
-    <table id="tabla-registros">
+    <table id="tabla_datos">
+        <thead>
         <tr>
             <th>Fecha y Hora</th>
             <th>Frecuencia Cardiaca</th>
@@ -14,6 +15,8 @@
             <th>Saturación de Oxígeno</th>
             <th>Temperatura</th>
         </tr>
+    </thead>
+    <tbody>
         {% for registro, alertas in registros_con_alertas %}
         <tr>
             <td>{{ registro.fecha_hora }}</td>
@@ -25,16 +28,15 @@
             <td>{{ registro.temperatura }}</td>
         </tr>
         {% endfor %}
+    </tbody>
     </table>
-    
-    
+
     <div id="alertas">
         <h2>Alertas</h2>
         <ul id="lista-alertas">
             <!-- Las alertas se agregarán aquí dinámicamente con JavaScript -->
         </ul>
     </div>
-
     <h2>Registros de Dolor</h2>
     <table>
         <tr>
@@ -58,70 +60,71 @@
     <!-- Agregar script JavaScript al final del archivo -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Obtener todas las filas de la tabla, excepto la de encabezado
-            const registros = Array.from(document.querySelectorAll('#tabla-registros tr')).slice(1);
-            const alertasLista = document.getElementById('lista-alertas');
-    
-            // Asegúrate de que hay al menos dos registros para comparar
-            if (registros.length >= 2) {
-                // Primer y segundo registros
-                const primerRegistro = registros[0];
-                const segundoRegistro = registros[1];
-                
-                // Función para obtener valores numéricos de una celda
-                const getValor = (fila, indice) => parseFloat(fila.cells[indice].textContent.trim());
-                
-                // Verificar si se obtienen valores numéricos válidos
-                console.log('Primer Registro:', Array.from(primerRegistro.cells).map(cell => cell.textContent.trim()));
-                console.log('Segundo Registro:', Array.from(segundoRegistro.cells).map(cell => cell.textContent.trim()));
-    
-                const alertas = [];
-    
-                // Función para comparar valores y generar alertas
-                const compararValores = (primero, segundo, indice, nombre) => {
-                    const primerValor = getValor(primero, indice);
-                    const segundoValor = getValor(segundo, indice);
-                    
-                    console.log(`Comparando ${nombre}: Primer = ${primerValor}, Segundo = ${segundoValor}`); // Depuración
-                    
-                    let alerta = '';
-                    if (segundoValor < primerValor) {
-                        alerta = `${nombre} Aumentando`;
-                    } else if (segundoValor > primerValor) {
-                        alerta = `${nombre} Disminuyendo`;
-                    }
-    
-                    if (alerta) {
-                        alertas.push(`${segundoRegistro.cells[0].textContent} - ${alerta}`);
-                    }
-                };
-    
-                // Comparar cada signo vital
-                compararValores(primerRegistro, segundoRegistro, 1, 'Frecuencia Cardiaca');
-                compararValores(primerRegistro, segundoRegistro, 2, 'Frecuencia Respiratoria');
-                compararValores(primerRegistro, segundoRegistro, 3, 'Presión Sistólica');
-                compararValores(primerRegistro, segundoRegistro, 4, 'Presión Diastólica');
-                compararValores(primerRegistro, segundoRegistro, 5, 'Saturación de Oxígeno');
-                compararValores(primerRegistro, segundoRegistro, 6, 'Temperatura');
-    
-                // Agregar alertas a la lista
-                alertas.forEach(alerta => {
-                    alertasLista.innerHTML += `<li>${alerta}</li>`;
-                });
-    
-                // Mensaje de depuración si no hay alertas
-                if (alertas.length === 0) {
-                    alertasLista.innerHTML = '<li>No se detectaron cambios significativos.</li>';
+            // Inicializar DataTables con orden por la columna de fecha (índice 0)
+            const tablaDatos = $('#tabla_datos').DataTable({
+                "order": [[0, 'desc']] // Ordenar por la primera columna (fecha) en orden descendente
+            });
+
+            // Función para generar alertas
+            const generarAlertas = () => {
+                // Obtener todas las filas de la tabla, excepto la de encabezado
+                const registros = Array.from(document.querySelectorAll('#tabla_datos tbody tr'));
+                const alertasLista = document.getElementById('lista-alertas');
+
+                // Asegúrate de que hay al menos dos registros para comparar
+                if (registros.length >= 2) {
+                    // Primer y segundo registros
+                    const primerRegistro = registros[0];
+                    const segundoRegistro = registros[1];
+
+                    // Función para obtener valores numéricos de una celda
+                    const getValor = (fila, indice) => parseFloat(fila.cells[indice].textContent.trim());
+
+                    const alertas = [];
+
+                    // Función para comparar valores y generar alertas
+                    const compararValores = (primero, segundo, indice, nombre) => {
+                        const primerValor = getValor(primero, indice);
+                        const segundoValor = getValor(segundo, indice);
+
+                        let alerta = '';
+                        if (segundoValor < primerValor) {
+                            alerta = `${nombre} Aumentando`;
+                        } else if (segundoValor > primerValor) {
+                            alerta = `${nombre} Disminuyendo`;
+                        }
+
+                        if (alerta) {
+                            alertas.push(`<i class="fa-solid fa-triangle-exclamation" style="color: #e01b24; font-size: 40px;"></i>  <span style="font-size: 20px; margin-left:10px;">${alerta}</span><br><br>`);
+                        }
+                    };
+
+                    // Comparar cada signo vital
+                    compararValores(primerRegistro, segundoRegistro, 1, 'Frecuencia Cardiaca');
+                    compararValores(primerRegistro, segundoRegistro, 2, 'Frecuencia Respiratoria');
+                    compararValores(primerRegistro, segundoRegistro, 3, 'Presión Sistólica');
+                    compararValores(primerRegistro, segundoRegistro, 4, 'Presión Diastólica');
+                    compararValores(primerRegistro, segundoRegistro, 5, 'Saturación de Oxígeno');
+                    compararValores(primerRegistro, segundoRegistro, 6, 'Temperatura');
+
+                    // Agregar alertas a la lista
+                    alertasLista.innerHTML = alertas.length > 0
+                        ? alertas.join('')
+                        : '<li>No se detectaron cambios significativos.</li>';
+                } else {
+                    // Mensaje si no hay suficientes registros
+                    alertasLista.innerHTML = '<li>No hay suficientes registros para comparar.</li>';
                 }
-            } else {
-                // Mensaje si no hay suficientes registros
-                alertasLista.innerHTML = '<li>No hay suficientes registros para comparar.</li>';
-            }
+            };
+
+            // Generar alertas cuando DataTables haya terminado de renderizar
+            tablaDatos.on('draw', function () {
+                generarAlertas();
+            });
+
+            // Generar alertas inicialmente
+            generarAlertas();
         });
     </script>
-    
-    
-    
-    
 </section>
 {% endblock %}

@@ -41,20 +41,23 @@
     <thead>
       <tr>
         <th>Numero ID</th>
-        <th>Fecha</th>
-        <th>Hora</th>
+        <th>Nombre</th>
+        <th>Tipo</th>
         <th>Estado</th>
       </tr>
     </thead>
-
-    {% for r in registros|slice:"0:3" %}
     <tr>
-      <td> {{r.id}} </td>
-      <td> {{r.fecha_hora|date:"d M Y"}} </td>
-      <td> {{r.fecha_hora|time:"H:i"}}</td>
-      <td> Registrado</td>
-    </tr>
-    {% endfor %}
+      <td> 1 </td>
+      <td> Juan Perez</td>
+      <td> Medico de Planta</td>
+      <td> Disponible</td>
+    </tr> 
+    <tr>
+      <td> 2 </td>
+      <td> Juan Perez</td>
+      <td> Medico de Planta</td>
+      <td> Disponible</td>
+    </tr> 
   </table>
 </div>
 
